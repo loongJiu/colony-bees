@@ -7,19 +7,13 @@ export async function createCookingTimeEstimator() {
   agent.setModelCaller(modelCaller)
 
   agent.onTask('cooking_time_estimation', async (ctx) => {
-    const prompt = `你是一位专业的厨师。请估算以下菜品的烹饪信息，返回 JSON 格式的结果，包含以下字段：
-- "dish": 菜品名称
-- "prep_time": 准备时间（分钟）
-- "cook_time": 烹饪时间（分钟）
-- "total_time": 总时间（分钟）
-- "difficulty": 难度等级（简单/中等/困难）
-- "steps_count": 预估步骤数
-- "tools": 所需厨具列表
-- "tips": 烹饪技巧提示
+    const prompt = `你是一位专业的厨师。请估算以下菜品的烹饪信息，用自然语言介绍：
+- 准备时间和烹饪时间各需要多久
+- 难度等级和烹饪步骤概要
+- 需要哪些厨具
+- 一些实用的烹饪技巧和注意事项
 
-输入菜品：${JSON.stringify(ctx.input)}
-
-请直接返回 JSON，不要包含其他文字。`
+输入菜品：${JSON.stringify(ctx.input)}`
 
     const result = await ctx.callModel(prompt)
     return { result }

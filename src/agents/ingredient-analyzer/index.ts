@@ -7,15 +7,13 @@ export async function createIngredientAnalyzer() {
   agent.setModelCaller(modelCaller)
 
   agent.onTask('ingredient_analysis', async (ctx) => {
-    const prompt = `你是一位专业的食材分析师。请分析以下食材，返回 JSON 格式的结果，包含以下字段：
-- "ingredients": 每种食材的分类（蔬菜/肉类/海鲜/调味品/主食等）
-- "seasonality": 每种食材的最佳季节和当前是否应季
-- "pairing": 食材之间的搭配建议，包括互补和相克的食材
-- "nutrition": 每种食材的主要营养成分概要
+    const prompt = `你是一位专业的食材分析师。请分析以下食材，用清晰易懂的语言介绍：
+- 每种食材的分类（蔬菜/肉类/海鲜/调味品/主食等）
+- 食材的季节性和新鲜度建议
+- 食材之间的搭配建议，哪些搭配好，哪些要避免
+- 简要的营养特点
 
-输入食材：${JSON.stringify(ctx.input)}
-
-请直接返回 JSON，不要包含其他文字。`
+输入食材：${JSON.stringify(ctx.input)}`
 
     const result = await ctx.callModel(prompt)
     return { result }

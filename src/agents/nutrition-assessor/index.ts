@@ -7,20 +7,13 @@ export async function createNutritionAssessor() {
   agent.setModelCaller(modelCaller)
 
   agent.onTask('nutrition_assessment', async (ctx) => {
-    const prompt = `你是一位专业的营养师。请评估以下菜品的营养成分，返回 JSON 格式的结果，包含以下字段：
-- "dish": 菜品名称
-- "calories": 预估热量（千卡）
-- "protein": 蛋白质含量（克）
-- "carbs": 碳水化合物含量（克）
-- "fat": 脂肪含量（克）
-- "fiber": 膳食纤维含量（克）
-- "vitamins": 主要维生素列表
-- "minerals": 主要矿物质列表
-- "health_index": 健康指数评分（1-10）
+    const prompt = `你是一位专业的营养师。请评估以下菜品的营养成分，用通俗易懂的语言介绍：
+- 预估热量和主要营养素（蛋白质、碳水、脂肪）含量
+- 富含的维生素和矿物质
+- 整体健康评价和饮食建议
+- 适合的人群和注意事项
 
-输入菜品：${JSON.stringify(ctx.input)}
-
-请直接返回 JSON，不要包含其他文字。`
+输入菜品：${JSON.stringify(ctx.input)}`
 
     const result = await ctx.callModel(prompt)
     return { result }
