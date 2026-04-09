@@ -18,7 +18,7 @@ export const modelCaller: ModelCaller = async (prompt, options) => {
       model: (options?.model as string) || MODEL_NAME,
       messages: [{ role: 'user', content: prompt }],
       temperature: options?.temperature ?? 0.7,
-      max_tokens: options?.max_tokens ?? 2048,
+      max_tokens: options?.max_tokens ?? 8192,
     }),
   })
 
@@ -27,5 +27,9 @@ export const modelCaller: ModelCaller = async (prompt, options) => {
   }
 
   const data = await response.json()
-  return data.choices?.[0]?.message?.content ?? ''
+  const message = data.choices?.[0]?.message
+  // 兼容推理模型：glm-4.7 等模型会将思考过程放在 reasoning_content，正式回复放在 content
+  const reasoning = message?.reasoning_content ?? ''
+  const content = message?.content ?? ''
+  return content || reasoning
 }
