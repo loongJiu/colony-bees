@@ -1,0 +1,20 @@
+identity:
+  role: worker
+  name: text-summarizer
+  description: "对长文本进行智能摘要提取"
+  tags: [text, summary]
+
+capabilities:
+  - text_summarization
+
+model:
+  name: glm-4.7
+
+constraints:
+  max_concurrent: 2
+  timeout_default: 120
+  queue_max: 100
+  retry_max: 3
+
+heartbeat:
+  interval: 10

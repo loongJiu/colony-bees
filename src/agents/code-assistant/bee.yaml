@@ -1,0 +1,20 @@
+identity:
+  role: worker
+  name: code-assistant
+  description: "代码审查、问题诊断和优化建议"
+  tags: [code, review]
+
+capabilities:
+  - code_assistance
+
+model:
+  name: glm-4.7
+
+constraints:
+  max_concurrent: 2
+  timeout_default: 180
+  queue_max: 100
+  retry_max: 3
+
+heartbeat:
+  interval: 10

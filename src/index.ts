@@ -4,6 +4,17 @@ import { createIngredientAnalyzer } from './agents/ingredient-analyzer/index.ts'
 import { createRecipeMatcher } from './agents/recipe-matcher/index.ts'
 import { createNutritionAssessor } from './agents/nutrition-assessor/index.ts'
 import { createCookingTimeEstimator } from './agents/cooking-time-estimator/index.ts'
+import { createTextSummarizer } from './agents/text-summarizer/index.ts'
+import { createTranslator } from './agents/translator/index.ts'
+import { createSentimentAnalyzer } from './agents/sentiment-analyzer/index.ts'
+import { createCodeAssistant } from './agents/code-assistant/index.ts'
+import { createBrainstormer } from './agents/brainstormer/index.ts'
+import { createProofreader } from './agents/proofreader/index.ts'
+import { createDataExplainer } from './agents/data-explainer/index.ts'
+import { createComparisonAnalyzer } from './agents/comparison-analyzer/index.ts'
+import { createTaskDecomposer } from './agents/task-decomposer/index.ts'
+import { createKeywordExtractor } from './agents/keyword-extractor/index.ts'
+import { createQuizGenerator } from './agents/quiz-generator/index.ts'
 import { createAgentLogger, startTimer } from './core/logger.ts'
 
 const logger = createAgentLogger('launcher')
@@ -17,6 +28,17 @@ const agentRegistry: Record<string, () => Promise<BeeAgent>> = {
   'recipe-matcher': createRecipeMatcher,
   'nutrition-assessor': createNutritionAssessor,
   'cooking-time-estimator': createCookingTimeEstimator,
+  'text-summarizer': createTextSummarizer,
+  'translator': createTranslator,
+  'sentiment-analyzer': createSentimentAnalyzer,
+  'code-assistant': createCodeAssistant,
+  'brainstormer': createBrainstormer,
+  'proofreader': createProofreader,
+  'data-explainer': createDataExplainer,
+  'comparison-analyzer': createComparisonAnalyzer,
+  'task-decomposer': createTaskDecomposer,
+  'keyword-extractor': createKeywordExtractor,
+  'quiz-generator': createQuizGenerator,
 }
 
 /** 为 agent 注册全局生命周期事件监听 */

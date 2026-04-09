@@ -1,0 +1,20 @@
+identity:
+  role: worker
+  name: brainstormer
+  description: "头脑风暴、创意生成和方案策划"
+  tags: [creative, brainstorming]
+
+capabilities:
+  - brainstorming
+
+model:
+  name: glm-4.7
+
+constraints:
+  max_concurrent: 2
+  timeout_default: 120
+  queue_max: 100
+  retry_max: 3
+
+heartbeat:
+  interval: 10

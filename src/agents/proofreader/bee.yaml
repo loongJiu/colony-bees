@@ -1,0 +1,20 @@
+identity:
+  role: worker
+  name: proofreader
+  description: "校对纠错，检查错别字、语法和标点问题"
+  tags: [text, proofreading]
+
+capabilities:
+  - proofreading
+
+model:
+  name: glm-4.7
+
+constraints:
+  max_concurrent: 2
+  timeout_default: 120
+  queue_max: 100
+  retry_max: 3
+
+heartbeat:
+  interval: 10

@@ -1,0 +1,20 @@
+identity:
+  role: worker
+  name: task-decomposer
+  description: "将复杂目标拆解为可执行的任务清单"
+  tags: [planning, task]
+
+capabilities:
+  - task_decomposition
+
+model:
+  name: glm-4.7
+
+constraints:
+  max_concurrent: 2
+  timeout_default: 120
+  queue_max: 100
+  retry_max: 3
+
+heartbeat:
+  interval: 10
