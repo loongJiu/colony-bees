@@ -4,6 +4,9 @@ import { createIngredientAnalyzer } from './agents/ingredient-analyzer/index.ts'
 import { createRecipeMatcher } from './agents/recipe-matcher/index.ts'
 import { createNutritionAssessor } from './agents/nutrition-assessor/index.ts'
 import { createCookingTimeEstimator } from './agents/cooking-time-estimator/index.ts'
+import { createAgentLogger, startTimer } from './core/logger.ts'
+
+const logger = createAgentLogger('launcher')
 
 const QUEEN_URL = process.env.QUEEN_URL || 'http://127.0.0.1:9009'
 const COLONY_TOKEN = process.env.COLONY_TOKEN || 'change-me-in-production'
@@ -16,57 +19,76 @@ const agentRegistry: Record<string, () => Promise<BeeAgent>> = {
   'cooking-time-estimator': createCookingTimeEstimator,
 }
 
+/** 为 agent 注册全局生命周期事件监听 */
+function bindLifecycleEvents(name: string, agent: BeeAgent) {
+  agent.on('joined', ({ agentId }) => {
+    logger.info('已加入集群', { agent: name, agentId })
+  })
+
+  agent.on('disconnected', ({ reason }) => {
+    logger.warn('连接断开', { agent: name, reason })
+  })
+
+  agent.on('reconnected', ({ agentId }) => {
+    logger.info('已重连', { agent: name, agentId })
+  })
+}
+
 async function main() {
   const args = process.argv.slice(2)
-
-  // 确定要启动的 agent 列表
   const targets = args.length > 0 ? args : Object.keys(agentRegistry)
 
-  // 校验参数
   for (const name of targets) {
     if (!agentRegistry[name]) {
-      console.error(`Unknown agent: ${name}`)
-      console.error(`Available: ${Object.keys(agentRegistry).join(', ')}`)
+      logger.error('未知的 agent', { name, available: Object.keys(agentRegistry).join(', ') })
       process.exit(1)
     }
   }
 
-  console.log(`Starting ${targets.length} agent(s): ${targets.join(', ')}`)
+  logger.info('启动中', { agents: targets.join(', '), queenUrl: QUEEN_URL })
 
   // 创建所有 agent
   const agents: { name: string; agent: BeeAgent }[] = []
   for (const name of targets) {
+    const initTimer = startTimer()
     const agent = await agentRegistry[name]()
+    logger.info('agent 创建完成', { agent: name, initMs: initTimer() })
+    bindLifecycleEvents(name, agent)
     agents.push({ name, agent })
   }
 
   // 并发加入 colony
+  const joinTimer = startTimer()
   const joinResults = await Promise.allSettled(
     agents.map(async ({ name, agent }) => {
       const result = await agent.join(QUEEN_URL, COLONY_TOKEN)
-      console.log(`✓ ${name} joined as ${result.agentId}`)
       return { name, ...result }
-    })
+    }),
   )
+  logger.info('集群加入阶段完成', { totalMs: joinTimer() })
 
-  // 报告失败
   for (const result of joinResults) {
     if (result.status === 'rejected') {
-      console.error(`✗ Join failed: ${result.reason}`)
+      logger.error('加入集群失败', { error: String(result.reason) })
     }
   }
 
   const joined = joinResults.filter(r => r.status === 'fulfilled').length
-  console.log(`${joined}/${targets.length} agent(s) running. Press Ctrl+C to stop.`)
+  logger.info('全部就绪', { joined, total: targets.length })
 
   // 优雅退出
   const shutdown = async () => {
-    console.log('\nShutting down...')
-    await Promise.allSettled(agents.map(async ({ name, agent }) => {
-      await agent.leave()
-      console.log(`✓ ${name} left`)
-    }))
-    console.log('Goodbye!')
+    logger.info('开始优雅退出...')
+    const shutdownTimer = startTimer()
+
+    await Promise.allSettled(
+      agents.map(async ({ name, agent }) => {
+        await agent.leave()
+        logger.info('已离开集群', { agent: name })
+      }),
+    )
+
+    logger.info('全部退出完成', { totalMs: shutdownTimer() })
     process.exit(0)
   }
 
@@ -75,6 +97,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error(err)
+  logger.error('启动失败', { error: String(err) })
   process.exit(1)
 })
