@@ -1,0 +1,20 @@
+identity:
+  role: worker
+  name: cooking-time-estimator
+  description: "估算菜品烹饪时间和难度"
+  tags: [dinner, cooking-time]
+
+capabilities:
+  - cooking_time_estimation
+
+model:
+  name: glm-4.7
+
+constraints:
+  max_concurrent: 1
+  timeout_default: 300
+  queue_max: 100
+  retry_max: 3
+
+heartbeat:
+  interval: 10

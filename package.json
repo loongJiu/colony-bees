@@ -1,0 +1,27 @@
+{
+  "name": "colony-bees",
+  "version": "1.0.0",
+  "description": "Dinner decision-making agent team powered by colony-bee-sdk",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "start:ingredient": "tsx src/index.ts ingredient-analyzer",
+    "start:recipe": "tsx src/index.ts recipe-matcher",
+    "start:nutrition": "tsx src/index.ts nutrition-assessor",
+    "start:cooking": "tsx src/index.ts cooking-time-estimator",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "colony-bee-sdk": "^1.0.0",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
