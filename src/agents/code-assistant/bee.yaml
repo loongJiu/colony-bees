@@ -12,7 +12,7 @@ model:
 
 constraints:
   max_concurrent: 2
-  timeout_default: 180
+  timeout_default: 300
   queue_max: 100
   retry_max: 3
 
